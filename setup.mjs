@@ -26,7 +26,7 @@ const colorize = (text, color) => `${colors[color]}${text}${colors.reset}`;
 const success = (text) => colorize(text, "green");
 const error = (text) => colorize(text, "red");
 const warning = (text) => colorize(text, "yellow");
-const info = (text) => colorize(text, "cyan");
+const info = (text) => colorize(text, "white");
 const bright = (text) => colorize(text, "bright");
 const dim = (text) => colorize(text, "dim");
 
@@ -316,7 +316,7 @@ async function main() {
     return;
   }
 
-  console.log(gradient(`Replacing "${currentScope}" with "${newScope}"...`, "#4F46E5", "#EC4899"));
+  console.log(info(`Replacing "${currentScope}" with "${newScope}"...`));
 
   const rootDir = process.cwd();
   const files = await getAllFiles(rootDir);
@@ -336,7 +336,7 @@ async function main() {
     }
   }
 
-  console.log(success(`\nDone! Updated ${bright(filesChanged.toString())} file(s).`));
+  console.log(success(`\n${gradient("Done!", "#4F46E5", "#EC4899")} ${info("Updated")} ${bright(filesChanged.toString())} ${info("file(s).")}`));
   
   if (filesChanged > 0) {
     const rl = createInterface({ input, output });
@@ -359,8 +359,8 @@ async function main() {
         console.log(`  ${info("1.")} Configure your environment (.env file)`);
         console.log(`  ${info("2.")} Run: ${bright(`${packageManager} db:push`)}`);
         console.log(`  ${info("3.")} Run: ${bright(`${packageManager} dev`)}`);
-      } catch (error) {
-        console.error(error(`\nError installing dependencies: ${error.message}`));
+      } catch (err) {
+        console.error(error(`\nError installing dependencies: ${err.message}`));
         console.log(bright("\nNext steps:"));
         console.log(`  ${info("1.")} Run: ${bright(installCommand)}`);
         console.log(`  ${info("2.")} Configure your environment (.env file)`);
@@ -390,8 +390,8 @@ async function main() {
   }
 }
 
-main().catch(async (error) => {
-  console.error(error(`Error: ${error.message}`));
+main().catch(async (err) => {
+  console.error(error(`Error: ${err.message}`));
   process.exit(1);
 });
 

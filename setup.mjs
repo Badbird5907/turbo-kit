@@ -1,13 +1,51 @@
 #!/usr/bin/env node
 
-import { readdir, readFile, writeFile, stat, access } from "node:fs/promises";
+import { readdir, readFile, writeFile, stat, access, unlink } from "node:fs/promises";
 import { join, relative } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-import { exec } from "node:child_process";
-import { promisify } from "node:util";
+import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
-const execAsync = promisify(exec);
+// ANSI color codes
+const colors = {
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  dim: "\x1b[2m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
+  white: "\x1b[37m",
+};
+
+// Color functions
+const colorize = (text, color) => `${colors[color]}${text}${colors.reset}`;
+const success = (text) => colorize(text, "green");
+const error = (text) => colorize(text, "red");
+const warning = (text) => colorize(text, "yellow");
+const info = (text) => colorize(text, "cyan");
+const bright = (text) => colorize(text, "bright");
+const dim = (text) => colorize(text, "dim");
+
+// Gradient function for text
+function gradient(text, startColor, endColor) {
+  const start = [parseInt(startColor.slice(1, 3), 16), parseInt(startColor.slice(3, 5), 16), parseInt(startColor.slice(5, 7), 16)];
+  const end = [parseInt(endColor.slice(1, 3), 16), parseInt(endColor.slice(3, 5), 16), parseInt(endColor.slice(5, 7), 16)];
+  let result = "";
+  
+  for (let i = 0; i < text.length; i++) {
+    const ratio = i / (text.length - 1 || 1);
+    const r = Math.round(start[0] + (end[0] - start[0]) * ratio);
+    const g = Math.round(start[1] + (end[1] - start[1]) * ratio);
+    const b = Math.round(start[2] + (end[2] - start[2]) * ratio);
+    result += `\x1b[38;2;${r};${g};${b}m${text[i]}\x1b[0m`;
+  }
+  
+  return result;
+}
 
 const EXCLUDED_DIRS = new Set([
   "node_modules",
@@ -26,6 +64,7 @@ const EXCLUDED_FILES = new Set([
   // "yarn.lock",
   // "bun.lockb",
   // we can search and replace lock files too
+  "README.md",
 ]);
 
 const TEXT_EXTENSIONS = new Set([
@@ -177,21 +216,21 @@ async function getPackageManager() {
     const rl = createInterface({ input, output });
     
     if (pmResult && pmResult.error) {
-      console.log("!!! Multiple lock files detected !!!");
-      console.log(`Found lock files for: ${pmResult.lockFiles.join(", ")}`);
-      console.log("Which package manager would you like to use?");
+      console.log(warning("!!! Multiple lock files detected !!!"));
+      console.log(info(`Found lock files for: ${pmResult.lockFiles.join(", ")}`));
+      console.log(info("Which package manager would you like to use?"));
     } else {
-      console.log("\nNo lockfile detected. Which package manager would you like to use?");
+      console.log(info("\nNo lockfile detected. Which package manager would you like to use?"));
     }
     
-    const answer = await rl.question("(npm/pnpm/yarn/bun, default: pnpm): ");
+    const answer = await rl.question(colorize("(npm/pnpm/yarn/bun, default: pnpm): ", "cyan"));
     rl.close();
     const pm = answer.trim().toLowerCase() || "pnpm";
     const validPms = ["npm", "pnpm", "yarn", "bun"];
     if (validPms.includes(pm)) {
       return pm;
     }
-    console.log(`Invalid choice "${pm}", defaulting to pnpm.`);
+    console.log(warning(`Invalid choice "${pm}", defaulting to pnpm.`));
     return "pnpm";
   }
 
@@ -199,14 +238,34 @@ async function getPackageManager() {
 }
 
 async function deleteSetupScript() {
-  const { unlink } = await import("node:fs/promises");
-  const { fileURLToPath } = await import("node:url");
   try {
-    await unlink(fileURLToPath(import.meta.url));
+    const scriptPath = fileURLToPath(import.meta.url);
+    await unlink(scriptPath);
     return true;
   } catch (err) {
     return false;
   }
+}
+
+async function runInstallCommand(fullCommand) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(fullCommand, [], {
+      stdio: "inherit",
+      shell: true,
+    });
+
+    child.on("error", (error) => {
+      reject(error);
+    });
+
+    child.on("close", (code) => {
+      if (code !== 0) {
+        reject(new Error(`Command exited with code ${code}`));
+      } else {
+        resolve();
+      }
+    });
+  });
 }
 
 async function main() {
@@ -214,13 +273,13 @@ async function main() {
   const hasNodeModules = await checkNodeModules();
   if (hasNodeModules) {
     const rl = createInterface({ input, output });
-    console.log("!!! node_modules directory detected !!!");
-    console.log("The setup script will perform find-and-replace operations in lockfiles.");
-    console.log("Please delete node_modules and re-run this script to ensure consistency.\n");
-    const answer = await rl.question("Would you like to exit now? (yes/no, default: yes): ");
+    console.log(warning("!!! node_modules directory detected !!!"));
+    console.log(info("The setup script will perform find-and-replace operations in lockfiles."));
+    console.log(info("Please delete node_modules and re-run this script to ensure consistency.\n"));
+    const answer = await rl.question(colorize("Would you like to exit now? (yes/no, default: yes): ", "yellow"));
     rl.close();
     if (answer.trim().toLowerCase() !== "no") {
-      console.log("Exiting. Please delete node_modules and re-run the script.");
+      console.log(info("Exiting. Please delete node_modules and re-run the script."));
       process.exit(0);
     }
   }
@@ -228,7 +287,7 @@ async function main() {
   const currentScope = await detectCurrentScope();
   
   if (currentScope !== "@acme" && !process.env.PACKAGE_SCOPE) {
-    console.log("Setup has already been run! Skipping...");
+    console.log(warning("Setup has already been run! Skipping..."));
     return;
   }
 
@@ -236,11 +295,11 @@ async function main() {
 
   if (process.env.PACKAGE_SCOPE) {
     newScope = process.env.PACKAGE_SCOPE;
-    console.log(`Using package scope from environment: ${newScope}\n`);
+    console.log(info(`Using package scope from environment: ${bright(newScope)}\n`));
   } else {
     const rl = createInterface({ input, output });
     newScope = await rl.question(
-      `Enter your package scope (default: ${currentScope}): `,
+      colorize(`Enter your package scope (default: ${currentScope}): `, "cyan"),
     );
     rl.close();
     newScope = newScope.trim() || currentScope;
@@ -253,11 +312,11 @@ async function main() {
   newScope = newScope.replace(/\/$/, ""); // remove trailing slash
 
   if (newScope === currentScope) {
-    console.log("No changes needed. Using default scope:", currentScope);
+    console.log(info(`No changes needed. Using default scope: ${bright(currentScope)}`));
     return;
   }
 
-  console.log(`Replacing "${currentScope}" with "${newScope}"...`);
+  console.log(gradient(`Replacing "${currentScope}" with "${newScope}"...`, "#4F46E5", "#EC4899"));
 
   const rootDir = process.cwd();
   const files = await getAllFiles(rootDir);
@@ -273,15 +332,15 @@ async function main() {
     if (changed) {
       filesChanged++;
       const relativePath = relative(rootDir, file);
-      console.log(`  ✓ ${relativePath}`);
+      console.log(`  ${success("✓")} ${dim(relativePath)}`);
     }
   }
 
-  console.log(`Done! Updated ${filesChanged} file(s).`);
+  console.log(success(`\nDone! Updated ${bright(filesChanged.toString())} file(s).`));
   
   if (filesChanged > 0) {
     const rl = createInterface({ input, output });
-    const answer = await rl.question("\nWould you like to install dependencies now? (yes/no, default: yes): ");
+    const answer = await rl.question(colorize("\nWould you like to install dependencies now? (yes/no, default: yes): ", "cyan"));
     rl.close();
     
     const packageManager = await getPackageManager();
@@ -292,52 +351,47 @@ async function main() {
                             packageManager === "bun" ? "bun install" :
                             "pnpm install";
       
-      console.log(`\nInstalling dependencies using ${packageManager}...`);
+      console.log(info(`\nInstalling dependencies using ${bright(packageManager)}...`));
       try {
-        const { stdout, stderr } = await execAsync(installCommand);
-        if (stdout) console.log(stdout);
-        if (stderr) console.error(stderr);
-        console.log("✓ Dependencies installed successfully!");
-        console.log("Next steps:");
-        console.log(`  1. Configure your environment (.env file)`);
-        console.log(`  2. Run: ${packageManager} db:push`);
-        console.log(`  3. Run: ${packageManager} dev`);
+        await runInstallCommand(installCommand);
+        console.log(success("\n✓ Dependencies installed successfully!"));
+        console.log(bright("\nNext steps:"));
+        console.log(`  ${info("1.")} Configure your environment (.env file)`);
+        console.log(`  ${info("2.")} Run: ${bright(`${packageManager} db:push`)}`);
+        console.log(`  ${info("3.")} Run: ${bright(`${packageManager} dev`)}`);
       } catch (error) {
-        console.error("Error installing dependencies:", error.message);
-        console.log("\nNext steps:");
-        console.log(`  1. Run: ${installCommand}`);
-        console.log("  2. Configure your environment (.env file)");
-        console.log(`  3. Run: ${packageManager} db:push`);
-        console.log(`  4. Run: ${packageManager} dev`);
+        console.error(error(`\nError installing dependencies: ${error.message}`));
+        console.log(bright("\nNext steps:"));
+        console.log(`  ${info("1.")} Run: ${bright(installCommand)}`);
+        console.log(`  ${info("2.")} Configure your environment (.env file)`);
+        console.log(`  ${info("3.")} Run: ${bright(`${packageManager} db:push`)}`);
+        console.log(`  ${info("4.")} Run: ${bright(`${packageManager} dev`)}`);
       }
     } else {
       const installCommand = packageManager === "npm" ? "npm install" :
                             packageManager === "yarn" ? "yarn install" :
                             packageManager === "bun" ? "bun install" :
                             "pnpm install";
-      console.log("\nNext steps:");
-      console.log(`  1. Run: ${installCommand}`);
-      console.log("  2. Configure your environment (.env file)");
-      console.log(`  3. Run: ${packageManager} db:push`);
-      console.log(`  4. Run: ${packageManager} dev`);
+      console.log(bright("\nNext steps:"));
+      console.log(`  ${info("1.")} Run: ${bright(installCommand)}`);
+      console.log(`  ${info("2.")} Configure your environment (.env file)`);
+      console.log(`  ${info("3.")} Run: ${bright(`${packageManager} db:push`)}`);
+      console.log(`  ${info("4.")} Run: ${bright(`${packageManager} dev`)}`);
     }
   }
-  
-  
-  if (process.env.KEEP_SETUP_SCRIPT === "false" && filesChanged > 0) {
-    const { unlink } = await import("node:fs/promises");
-    const { fileURLToPath } = await import("node:url");
-    try {
-      await unlink(fileURLToPath(import.meta.url));
-      console.log("Setup script deleted.");
-    } catch (err) {
-      console.error("Could not delete setup script! Please delete it manually.\n", err.message);
+
+  if (process.env.KEEP_SETUP_SCRIPT !== "true" && filesChanged > 0) {
+    const deleted = await deleteSetupScript();
+    if (deleted) {
+      console.log(dim("\n✓ Setup script deleted."));
+    } else {
+      console.log(warning("\n⚠ Could not delete setup script automatically. Please delete it manually."));
     }
   }
 }
 
-main().catch((error) => {
-  console.error("Error:", error.message);
+main().catch(async (error) => {
+  console.error(error(`Error: ${error.message}`));
   process.exit(1);
 });
 

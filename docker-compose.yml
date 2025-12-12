@@ -1,0 +1,88 @@
+version: "3.9"
+
+services:
+  # -- postgres --
+  postgres:
+    image: postgres:16-alpine
+    container_name: dev-postgres
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: appdb
+      # Optional tuning for local dev
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d appdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  # // postgres //
+
+  # -- mailpit --
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: dev-mailpit
+    ports:
+      - "8025:8025"   # Web UI
+      - "1025:1025"   # SMTP
+    environment:
+      # Example: enable basic auth for UI (optional)
+      MP_UI_AUTH: "false"
+      MP_WEBROOT: "/"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8025/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  # // mailpit //
+
+  # -- minio --
+  minio:
+    image: minio/minio:latest
+    container_name: dev-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # Console
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  minio-create-bucket:
+    image: minio/mc:latest
+    container_name: dev-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin123 &&
+      mc mb -p local/dev-bucket || true &&
+      mc policy set public local/dev-bucket || true
+      "
+    restart: "no"
+  # // minio //
+
+networks:
+  default:
+    name: dev-net
+
+volumes:
+  # -- postgres --
+  postgres_data:
+  # // postgres //
+
+  # -- minio --
+  minio_data:
+  # // minio //

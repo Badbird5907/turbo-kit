@@ -43,3 +43,6 @@ dist/
 
 # turbo
 .turbo
+
+# docker data volumes
+docker/*/data

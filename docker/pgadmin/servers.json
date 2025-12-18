@@ -1,0 +1,15 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Local PostgreSQL",
+      "Group": "Development",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "appdb",
+      "Username": "dev",
+      "SSLMode": "prefer",
+      "Comment": "Auto-configured PostgreSQL connection"
+    }
+  }
+}
+

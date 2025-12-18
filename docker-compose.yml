@@ -9,18 +9,41 @@ services:
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: devpass
       POSTGRES_DB: appdb
-      # Optional tuning for local dev
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U dev -d appdb"]
       interval: 5s
       timeout: 3s
       retries: 20
   # // postgres //
+
+  # -- pgadmin --
+  pgadmin:
+    image: dpage/pgadmin4:9
+    container_name: dev-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@localhost.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - ./docker/pgadmin/data:/var/lib/pgadmin
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/misc/ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  # // pgadmin //
 
   # -- mailpit --
   mailpit:
@@ -52,7 +75,7 @@ services:
       - "9000:9000"  # S3 API
       - "9001:9001"  # Console
     volumes:
-      - minio_data:/data
+      - ./docker/minio/data:/data
     healthcheck:
       test: ["CMD", "mc", "ready", "local"]
       interval: 5s
@@ -77,12 +100,3 @@ services:
 networks:
   default:
     name: dev-net
-
-volumes:
-  # -- postgres --
-  postgres_data:
-  # // postgres //
-
-  # -- minio --
-  minio_data:
-  # // minio //

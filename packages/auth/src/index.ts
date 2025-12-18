@@ -11,9 +11,7 @@ export function initAuth<
   baseUrl: string;
   productionUrl: string;
   secret: string | undefined;
-
-  discordClientId: string;
-  discordClientSecret: string;
+  socialProviders: BetterAuthOptions['socialProviders'];
   extraPlugins?: TExtraPlugins;
 }) {
   const config = {
@@ -28,12 +26,13 @@ export function initAuth<
       }),
       ...(options.extraPlugins ?? []),
     ],
-    socialProviders: {
-      discord: {
-        clientId: options.discordClientId,
-        clientSecret: options.discordClientSecret,
-        redirectURI: `${options.productionUrl}/api/auth/callback/discord`,
-      },
+    socialProviders: Object.fromEntries(Object.entries(options.socialProviders ?? {}).map(([key, value]) => [key, {
+      clientId: value.clientId,
+      clientSecret: value.clientSecret,
+      redirectURI: `${options.productionUrl}/api/auth/callback/${key}`,
+    }])),
+    emailAndPassword: {
+      enabled: true,
     },
     onAPIError: {
       onError(error, ctx) {

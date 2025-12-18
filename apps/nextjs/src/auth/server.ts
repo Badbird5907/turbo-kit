@@ -22,6 +22,9 @@ export const auth = initAuth({
   discordClientId: env.AUTH_DISCORD_ID,
   discordClientSecret: env.AUTH_DISCORD_SECRET,
   extraPlugins: [nextCookies()],
+  emailAndPassword: {
+    enabled: true,
+  }
 });
 
 export const getSession = cache(async () =>

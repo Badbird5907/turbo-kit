@@ -21,7 +21,7 @@ import {
 import { Input } from "@acme/ui/input";
 import { toast } from "@acme/ui/toast";
 
-import { useTRPC } from "~/trpc/react";
+import { useTRPC } from "../trpc/react";
 
 export function CreatePostForm() {
   const trpc = useTRPC();
@@ -71,7 +71,7 @@ export function CreatePostForm() {
             return (
               <Field data-invalid={isInvalid}>
                 <FieldContent>
-                  <FieldLabel htmlFor={field.name}>Bug Title</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>Title</FieldLabel>
                 </FieldContent>
                 <Input
                   id={field.name}
@@ -112,7 +112,7 @@ export function CreatePostForm() {
           }}
         />
       </FieldGroup>
-      <Button type="submit">Create</Button>
+      <Button type="submit" className="mt-4">Create</Button>
     </form>
   );
 }
@@ -165,15 +165,21 @@ export function PostCard(props: {
   );
 
   return (
-    <div className="bg-muted flex flex-row rounded-lg p-4">
-      <div className="grow">
-        <h2 className="text-primary text-2xl font-bold">{props.post.title}</h2>
-        <p className="mt-2 text-sm">{props.post.content}</p>
-      </div>
-      <div>
+    <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/80 p-6 shadow-sm backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-lg">
+      <div className="absolute inset-0 -z-10 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="flex flex-row items-start gap-4">
+        <div className="grow">
+          <h2 className="text-primary mb-2 text-xl font-bold leading-tight">
+            {props.post.title}
+          </h2>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            {props.post.content}
+          </p>
+        </div>
         <Button
           variant="ghost"
-          className="text-primary cursor-pointer text-sm font-bold uppercase hover:bg-transparent hover:text-white"
+          size="sm"
+          className="text-muted-foreground hover:text-destructive shrink-0 hover:bg-destructive/10"
           onClick={() => deletePost.mutate(props.post.id)}
         >
           Delete
@@ -186,24 +192,28 @@ export function PostCard(props: {
 export function PostCardSkeleton(props: { pulse?: boolean }) {
   const { pulse = true } = props;
   return (
-    <div className="bg-muted flex flex-row rounded-lg p-4">
-      <div className="grow">
-        <h2
+    <div className="overflow-hidden rounded-xl border border-border/50 bg-card/80 p-6 shadow-sm backdrop-blur-sm">
+      <div className="flex flex-row items-start gap-4">
+        <div className="grow space-y-3">
+          <div
+            className={cn(
+              "bg-primary/20 h-6 w-1/3 rounded-md",
+              pulse && "animate-pulse",
+            )}
+          />
+          <div
+            className={cn(
+              "bg-muted-foreground/20 h-4 w-2/3 rounded-md",
+              pulse && "animate-pulse",
+            )}
+          />
+        </div>
+        <div
           className={cn(
-            "bg-primary w-1/4 rounded-sm text-2xl font-bold",
+            "bg-muted/50 h-8 w-16 shrink-0 rounded-md",
             pulse && "animate-pulse",
           )}
-        >
-          &nbsp;
-        </h2>
-        <p
-          className={cn(
-            "mt-2 w-1/3 rounded-sm bg-current text-sm",
-            pulse && "animate-pulse",
-          )}
-        >
-          &nbsp;
-        </p>
+        />
       </div>
     </div>
   );

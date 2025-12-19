@@ -6,7 +6,7 @@ import { nextCookies } from "better-auth/next-js";
 
 import { initAuth } from "@acme/auth";
 
-import { env } from "~/env";
+import { env } from "@/env";
 
 const baseUrl =
   env.VERCEL_ENV === "production"
@@ -15,16 +15,18 @@ const baseUrl =
       ? `https://${env.VERCEL_URL}`
       : "http://localhost:3000";
 
+const productionUrl = env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000";
 export const auth = initAuth({
   baseUrl,
-  productionUrl: `https://${env.VERCEL_PROJECT_PRODUCTION_URL ?? "turbo.t3.gg"}`,
+  productionUrl,
   secret: env.AUTH_SECRET,
-  discordClientId: env.AUTH_DISCORD_ID,
-  discordClientSecret: env.AUTH_DISCORD_SECRET,
+  socialProviders: {
+    github: {
+      clientId: env.AUTH_GITHUB_ID,
+      clientSecret: env.AUTH_GITHUB_SECRET,
+    }
+  },
   extraPlugins: [nextCookies()],
-  emailAndPassword: {
-    enabled: true,
-  }
 });
 
 export const getSession = cache(async () =>

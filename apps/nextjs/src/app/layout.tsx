@@ -5,10 +5,11 @@ import { cn } from "@acme/ui";
 import { ThemeProvider, ThemeToggle } from "@acme/ui/theme";
 import { Toaster } from "@acme/ui/toast";
 
-import { env } from "~/env";
-import { TRPCReactProvider } from "~/trpc/react";
+import { env } from "@/env";
+import { TRPCReactProvider } from "@/trpc/react";
+import { AuthMenu } from "@/components/auth-menu";
 
-import "~/app/styles.css";
+import "@/app/styles.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
       ? "https://turbo.t3.gg"
       : "http://localhost:3000",
   ),
-  title: "Create T3 Turbo",
+  title: "Turbo Kit",
   description: "Simple monorepo with shared backend for web & mobile apps",
   openGraph: {
     title: "Create T3 Turbo",
@@ -58,6 +59,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         )}
       >
         <ThemeProvider>
+          <div className="absolute right-4 top-4 z-50 flex items-center gap-4">
+            <AuthMenu />
+          </div>
           <TRPCReactProvider>{props.children}</TRPCReactProvider>
           <div className="absolute right-4 bottom-4">
             <ThemeToggle />

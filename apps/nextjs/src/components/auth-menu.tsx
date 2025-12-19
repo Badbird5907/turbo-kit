@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@acme/ui/button";
+import { Button } from "@acme/ui/components/button";
 
 import { getSession } from "@/auth/server";
 
@@ -36,5 +36,4 @@ export async function AuthMenu() {
     </div>
   );
 }
-
 

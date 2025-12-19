@@ -7,6 +7,7 @@
   },
   "packageManager": "pnpm@10.19.0",
   "scripts": {
+    "auto-export": "tsx auto-export.ts",
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
@@ -29,6 +30,7 @@
     "@turbo/gen": "^2.5.8",
     "dotenv-cli": "^10.0.0",
     "prettier": "catalog:",
+    "tsx": "catalog:",
     "turbo": "^2.5.8",
     "typescript": "catalog:"
   },

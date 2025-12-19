@@ -1,10 +1,12 @@
-import { cn } from "@acme/ui";
+import * as React from "react";
 
-export function Input({
+import { cn } from "@acme/ui/lib/utils";
+
+function Input({
   className,
   type,
   ...props
-}: React.ComponentProps<"input">) {
+}: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       type={type}
@@ -19,3 +21,5 @@ export function Input({
     />
   );
 }
+
+export { Input };

@@ -10,8 +10,11 @@
     "cssVariables": true
   },
   "aliases": {
-    "utils": "@acme/ui",
-    "components": "src/",
-    "ui": "src/"
-  }
+    "ui": "src/components",
+    "components": "@acme/ui/components",
+    "utils": "@acme/ui/lib/utils",
+    "lib": "@acme/ui/lib",
+    "hooks": "@acme/ui/hooks"
+  },
+  "iconLibrary": "lucide"
 }

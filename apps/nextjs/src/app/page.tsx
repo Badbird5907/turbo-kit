@@ -4,7 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { CreatePostForm, PostCardSkeleton, PostList } from "@/components/posts";
 import Link from "next/link";
-import { Button } from "@acme/ui/button";
+import { Button } from "@acme/ui/components/button";
 
 
 export default function HomePage() {

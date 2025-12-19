@@ -9,17 +9,17 @@ import {
 
 import type { RouterOutputs } from "@acme/api";
 import { CreatePostSchema } from "@acme/db/schema";
-import { cn } from "@acme/ui";
-import { Button } from "@acme/ui/button";
+import { cn } from "@acme/ui/lib/utils";
+import { Button } from "@acme/ui/components/button";
 import {
   Field,
   FieldContent,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@acme/ui/field";
-import { Input } from "@acme/ui/input";
-import { toast } from "@acme/ui/toast";
+} from "@acme/ui/components/field";
+import { Input } from "@acme/ui/components/input";
+import { toast } from "sonner";
 
 import { useTRPC } from "../trpc/react";
 

@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { cn } from "@acme/ui";
-import { ThemeProvider, ThemeToggle } from "@acme/ui/theme";
-import { Toaster } from "@acme/ui/toast";
+import { Toaster } from "@acme/ui/components/sonner";
+import { cn } from "@acme/ui/lib/utils";
 
+import { AuthMenu } from "@/components/auth-menu";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { env } from "@/env";
 import { TRPCReactProvider } from "@/trpc/react";
-import { AuthMenu } from "@/components/auth-menu";
 
 import "@/app/styles.css";
 
@@ -18,12 +19,12 @@ export const metadata: Metadata = {
       : "http://localhost:3000",
   ),
   title: "Turbo Kit",
-  description: "Simple monorepo with shared backend for web & mobile apps",
+  description: "Opinionated full-stack template for quickly bootstrapping a Next.js and turborepo app with tRPC, Drizzle, Shadcn/ui, Better Auth, and more.",
   openGraph: {
-    title: "Create T3 Turbo",
-    description: "Simple monorepo with shared backend for web & mobile apps",
-    url: "https://create-t3-turbo.vercel.app",
-    siteName: "Create T3 Turbo",
+    title: "Turbo Kit",
+    description: "Opinionated full-stack template for quickly bootstrapping a Next.js and turborepo app with tRPC, Drizzle, Shadcn/ui, Better Auth, and more.",
+    url: "https://turbo-kit.vercel.app",
+    siteName: "Turbo Kit",
   },
   twitter: {
     card: "summary_large_image",
@@ -58,15 +59,18 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           geistMono.variable,
         )}
       >
-        <ThemeProvider>
-          <div className="absolute right-4 top-4 z-50 flex items-center gap-4">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="absolute top-4 right-4 z-50 flex items-center gap-4">
             <AuthMenu />
           </div>
           <TRPCReactProvider>{props.children}</TRPCReactProvider>
-          <div className="absolute right-4 bottom-4">
-            <ThemeToggle />
-          </div>
           <Toaster />
+          <ThemeToggle />
         </ThemeProvider>
       </body>
     </html>

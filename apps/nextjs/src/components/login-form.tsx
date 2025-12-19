@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@acme/ui/button";
-import { Input } from "@acme/ui/input";
-import { Label } from "@acme/ui/label";
-import { Separator } from "@acme/ui/separator";
+import { Button } from "@acme/ui/components/button";
+import { Input } from "@acme/ui/components/input";
+import { Label } from "@acme/ui/components/label";
+import { Separator } from "@acme/ui/components/separator";
 
 import { authClient } from "@/auth/client";
 

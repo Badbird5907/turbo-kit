@@ -29,7 +29,7 @@ export function initAuth<
     socialProviders: Object.fromEntries(Object.entries(options.socialProviders ?? {}).map(([key, value]) => [key, {
       clientId: value.clientId,
       clientSecret: value.clientSecret,
-      redirectURI: `${options.productionUrl}/api/auth/callback/${key}`,
+      redirectURI: value.redirectURI ?? `${options.productionUrl}/api/auth/callback/${key}`,
     }])),
     emailAndPassword: {
       enabled: true,

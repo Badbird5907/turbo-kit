@@ -12,6 +12,12 @@ import { CreatePostSchema } from "@acme/db/schema";
 import { cn } from "@acme/ui/lib/utils";
 import { Button } from "@acme/ui/components/button";
 import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@acme/ui/components/card";
+import {
   Field,
   FieldContent,
   FieldError,
@@ -165,35 +171,34 @@ export function PostCard(props: {
   );
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-border/50 bg-card/80 p-6 shadow-sm backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-lg">
-      <div className="absolute inset-0 -z-10 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-      <div className="flex flex-row items-start gap-4">
-        <div className="grow">
-          <h2 className="text-primary mb-2 text-xl font-bold leading-tight">
+    <Card className="group relative overflow-hidden bg-card/80 backdrop-blur-sm transition-all">
+      <CardHeader className="flex flex-row items-start justify-between space-y-0">
+        <div className="grow space-y-2">
+          <CardTitle className="text-primary text-xl leading-tight">
             {props.post.title}
-          </h2>
-          <p className="text-muted-foreground text-sm leading-relaxed">
+          </CardTitle>
+          <CardDescription className="text-sm leading-relaxed">
             {props.post.content}
-          </p>
+          </CardDescription>
         </div>
         <Button
           variant="ghost"
           size="sm"
-          className="text-muted-foreground hover:text-destructive shrink-0 hover:bg-destructive/10"
+          className="text-muted-foreground hover:text-destructive shrink-0 hover:bg-destructive/10 dark:hover:bg-destructive/10"
           onClick={() => deletePost.mutate(props.post.id)}
         >
           Delete
         </Button>
-      </div>
-    </div>
+      </CardHeader>
+    </Card>
   );
 }
 
 export function PostCardSkeleton(props: { pulse?: boolean }) {
   const { pulse = true } = props;
   return (
-    <div className="overflow-hidden rounded-xl border border-border/50 bg-card/80 p-6 shadow-sm backdrop-blur-sm">
-      <div className="flex flex-row items-start gap-4">
+    <Card className="overflow-hidden bg-card/80 backdrop-blur-sm">
+      <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <div className="grow space-y-3">
           <div
             className={cn(
@@ -214,7 +219,7 @@ export function PostCardSkeleton(props: { pulse?: boolean }) {
             pulse && "animate-pulse",
           )}
         />
-      </div>
-    </div>
+      </CardHeader>
+    </Card>
   );
 }

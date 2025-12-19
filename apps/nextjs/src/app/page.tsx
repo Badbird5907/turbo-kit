@@ -5,6 +5,7 @@ import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { CreatePostForm, PostCardSkeleton, PostList } from "@/components/posts";
 import Link from "next/link";
 import { Button } from "@acme/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@acme/ui/components/card";
 
 
 export default function HomePage() {
@@ -30,9 +31,11 @@ export default function HomePage() {
             </p>
 
             {/* Getting Started Section */}
-            <div className="mb-12 w-full max-w-3xl rounded-2xl border border-border/50 bg-card/30 p-6 text-left backdrop-blur-sm">
-              <h2 className="mb-4 text-2xl font-bold">Getting Started</h2>
-              <div className="space-y-3 text-sm text-muted-foreground">
+            <Card className="mb-12 w-full max-w-3xl bg-card/30 text-left backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-2xl">Getting Started</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-muted-foreground">
                 <p className="text-base">
                   This template is ready to use! Here are some files you can start with:
                 </p>
@@ -75,24 +78,26 @@ export default function HomePage() {
                     </Button>
                   </Link>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Create Post Form Section */}
           <div className="mx-auto mb-16 max-w-3xl">
-            <div className="rounded-2xl border border-border/50 bg-card/50 p-6 shadow-xl backdrop-blur-sm sm:p-8">
-              <h2 className="mb-6 text-2xl font-bold">
-                New Post
-              </h2>
-              <CreatePostForm />
-            </div>
+            <Card className="bg-card/50 shadow-xl backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-2xl">New Post</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CreatePostForm />
+              </CardContent>
+            </Card>
           </div>
 
           {/* Posts Section */}
           <div className="mx-auto max-w-3xl">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Recent Reports</h2>
+              <h2 className="text-2xl font-bold">Posts</h2>
               <div className="text-sm text-muted-foreground">
                 Latest activity
               </div>

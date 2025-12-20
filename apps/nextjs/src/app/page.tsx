@@ -30,7 +30,6 @@ export default function HomePage() {
               tRPC, Drizzle, Shadcn/ui, Better Auth, and more.
             </p>
 
-            {/* Getting Started Section */}
             <Card className="mb-12 w-full max-w-3xl bg-card/30 text-left backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="text-2xl">Getting Started</CardTitle>
@@ -78,11 +77,23 @@ export default function HomePage() {
                     </Button>
                   </Link>
                 </div>
+                <div className="mt-6 space-y-2 border-t border-border/50 pt-4">
+                  <p className="text-sm">
+                    For more detailed setup instructions and next steps, check out the full documentation.
+                  </p>
+                  <Link
+                    href="https://turbo-kit.badbird.dev/docs/getting-started"
+                    target="_blank"
+                  >
+                    <Button className="mt-2" variant="outline">
+                      View Guide <ExternalLink className="ml-2 size-4" />
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Create Post Form Section */}
           <div className="mx-auto mb-16 max-w-3xl">
             <Card className="bg-card/50 shadow-xl backdrop-blur-sm">
               <CardHeader>
@@ -94,7 +105,6 @@ export default function HomePage() {
             </Card>
           </div>
 
-          {/* Posts Section */}
           <div className="mx-auto max-w-3xl">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold">Posts</h2>

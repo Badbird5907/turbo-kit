@@ -3,7 +3,7 @@
 ## Installation
 To initialize a new project with turbo-kit, simply run the following command:
 ```bash
-npx create-turbo-kit@latest
+pnpm create turbo-kit@latest
 ```
 
 ## About
@@ -58,7 +58,7 @@ tooling
 
 To get it running, follow the steps below:
 
-### 1. Setup dependencies
+### 1. Install dependencies and begin developing
 
 ```bash
 # Install dependencies
@@ -70,9 +70,18 @@ vim .env
 
 # Push the Drizzle schema to the database
 pnpm db:push
+
+# Spin up docker container
+# First run will take a while to download the images, and set things up
+# Subsequent runs will be faster
+docker compose up -d
+
+# Run next dev server
+# This command actually also runs the above docker command
+pnpm run dev
 ```
 
-### 2. Database / Drizzle ORM (db package)
+### 2. Database / Drizzle ORM
 
 This project uses [Drizzle ORM](https://orm.drizzle.team) for type-safe database queries. The database schema is defined in `packages/db/src/schema/index.ts`.
 
@@ -264,6 +273,11 @@ The generator sets up the `package.json`, `tsconfig.json` and a `index.ts`, as w
 No, it does not. The `api` package should only be a production dependency in the Next.js application where it's served. This lets you have full typesafety in your client applications, while keeping your backend code safe.
 
 If you need to share runtime code between the client and server, such as input validation schemas, you can create a separate `shared` package for this and import it on both sides.
+
+### Why not run the next dev server in docker too?
+See [Next.js docs - Local Development](https://nextjs.org/docs/app/guides/local-development#8-consider-local-development-over-docker)
+
+Docker is used in this project to run only the development databases and services.
 
 ## Deployment
 

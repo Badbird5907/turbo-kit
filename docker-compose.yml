@@ -54,7 +54,7 @@ services:
       - "1025:1025"   # SMTP
     environment:
       # Example: enable basic auth for UI (optional)
-      MP_UI_AUTH: "false"
+      # MP_UI_AUTH: "username:password"
       MP_WEBROOT: "/"
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:8025/health"]

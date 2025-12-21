@@ -46,3 +46,5 @@ dist/
 
 # docker data volumes
 docker/*/data
+
+.react-email/

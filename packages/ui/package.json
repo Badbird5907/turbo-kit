@@ -48,7 +48,6 @@
   },
   "prettier": "@acme/prettier-config",
   "exports": {
-    ".": "./src/index.ts",
     "./components/accordion": "./src/components/accordion.tsx",
     "./components/badge": "./src/components/badge.tsx",
     "./components/button": "./src/components/button.tsx",

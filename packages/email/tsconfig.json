@@ -1,0 +1,9 @@
+{
+  "extends": "@acme/tsconfig/compiled-package.json",
+  "include": ["."],
+	"exclude": ["dist", "build", "node_modules"],
+	"compilerOptions": {
+		"strict": true,
+		"jsx": "react-jsx"
+	}
+}

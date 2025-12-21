@@ -17,6 +17,7 @@ export function initAuth<
   const config = {
     database: drizzleAdapter(db, {
       provider: "pg",
+      usePlural: true
     }),
     baseURL: options.baseUrl,
     secret: options.secret,

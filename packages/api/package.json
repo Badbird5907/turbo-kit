@@ -20,8 +20,11 @@
   "dependencies": {
     "@acme/auth": "workspace:*",
     "@acme/db": "workspace:*",
+    "@acme/redis": "workspace:*",
+    "@acme/types": "workspace:*",
     "@acme/validators": "workspace:*",
     "@trpc/server": "catalog:",
+    "@upstash/redis": "^1.35.8",
     "superjson": "2.2.3",
     "zod": "catalog:"
   },

@@ -5,7 +5,7 @@
  * DO NOT USE THIS FILE DIRECTLY IN YOUR APPLICATION.
  *
  * This configuration is consumed by the CLI command:
- * `pnpx @better-auth/cli generate --config script/auth-cli.ts --output ../db/src/auth-schema.ts`
+ * `pnpx @better-auth/cli generate --config script/auth-cli.ts --output ../db/src/schema/auth.ts`
  *
  * For actual authentication usage, import from "../src/index.ts" instead.
  */

@@ -12,6 +12,8 @@ import { z, ZodError } from "zod/v4";
 
 import type { Auth, Session } from "@acme/auth";
 import { db } from "@acme/db/client";
+import { redis } from "@acme/redis";
+import type { Redis } from "@upstash/redis";
 
 /**
  * 1. CONTEXT
@@ -33,6 +35,7 @@ export async function createTRPCContext(opts: {
   authApi: Auth["api"];
   session: Session | null;
   db: typeof db;
+  redis: Redis;
 }> {
   const authApi = opts.auth.api;
   const session = await authApi.getSession({
@@ -42,6 +45,7 @@ export async function createTRPCContext(opts: {
     authApi,
     session,
     db,
+    redis: redis(),
   };
 };
 

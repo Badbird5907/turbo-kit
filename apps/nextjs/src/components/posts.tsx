@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-query";
 
 import type { RouterOutputs } from "@acme/api";
-import { CreatePostSchema } from "@acme/db/schema";
+import { CreatePostSchema } from "@acme/types";
 import { cn } from "@acme/ui/lib/utils";
 import { Button } from "@acme/ui/components/button";
 import {

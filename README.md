@@ -64,7 +64,15 @@ pnpm i
 # Configure environment variables
 # There is an `.env.example` in the root directory you can use for reference
 vim .env
+```
 
+#### Configure a Github OAuth app
+Navigate to [Settings > Developer Settings > Oauth Apps > New](https://github.com/settings/applications/new), and fill out the details.
+
+For the Authorization callback URL, fill in `http://localhost:3000/api/auth/callback/github`.
+If you are deploying the auth proxy, change the domain to your production domain
+
+```bash
 # Push the Drizzle schema to the database
 pnpm db:push
 

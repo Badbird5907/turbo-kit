@@ -34,6 +34,8 @@ packages
   │   └─ Authentication using better-auth.
   ├─ db
   │   └─ Typesafe db calls using Drizzle & Supabase
+  ├─ email
+  │   └─ React Email templates
   ├─ redis
   │   └─ Upstash Redis client
   ├─ types

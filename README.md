@@ -6,6 +6,8 @@ To initialize a new project with turbo-kit, simply run the following command:
 pnpm create turbo-kit@latest
 ```
 
+Currently turbo-kit works with only pnpm. There is an issue with the template repo that breaks the conversion to other package managers that is typically handled by create-turbo.
+
 ## About
 
 turbo-kit is [Evan Yu](https://evanyu.dev)'s opinionated starter monorepo template for Turborepo + Next.js with tRPC, Drizzle, Shadcn/ui, Better Auth, and more.

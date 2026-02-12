@@ -13,6 +13,8 @@
     "clean:workspaces": "turbo run clean",
     "auth:generate": "pnpm -F @acme/auth generate",
     "db:push": "dotenv -e .env -- pnpm -F @acme/db push",
+    "db:generate": "dotenv -e .env -- pnpm -F @acme/db generate",
+    "db:migrate": "dotenv -e .env -- pnpm -F @acme/db migrate",
     "db:studio": "turbo -F @acme/db studio",
     "dev": "docker compose up -d && turbo watch dev --continue",
     "dev:next": "turbo watch dev -F @acme/nextjs...",

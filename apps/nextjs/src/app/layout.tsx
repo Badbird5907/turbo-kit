@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     env.VERCEL_ENV === "production"
       ? "https://turbo.t3.gg"
-      : "http://localhost:3000",
+      : env.APP_URL,
   ),
   title: "Turbo Kit",
   description: "Opinionated full-stack template for quickly bootstrapping a Next.js and turborepo app with tRPC, Drizzle, Shadcn/ui, Better Auth, and more.",

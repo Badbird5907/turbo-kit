@@ -17,6 +17,7 @@ export const env = createEnv({
    */
   server: {
     POSTGRES_URL: z.url(),
+    APP_URL: z.string().url().default("http://localhost:3000"),
   },
 
   /**
